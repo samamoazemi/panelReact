@@ -2,7 +2,7 @@ import './AddNewCountry.css';
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import { AddNewCountries } from 'services/countries/addNewCountries';
-import SelectForm from 'common/SelectForm';
+import SelectForm from '@jumbo/components/Common/SelectForm';
 
 const initialValues = {
   persianTitle: '',
@@ -31,20 +31,27 @@ const validate = values => {
 
 const stateOptions = [
   { value: '0', label: 'فعال' },
-  { value: 'Hi1king', label: 'غیر فعال' },
+  { value: '1', label: 'غیر فعال' },
 ];
+
 const AddNewCountry = () => {
   const [error, setError] = useState(null);
 
   const onSubmit = async values => {
     console.log(values);
-    // try {
-    //   const { data } = await AddNewCountries(values);
-    //   //console.log(data);
-    //   setError(null);
-    // } catch (error) {
-    //   if (error.response && error.response.data.message) setError(error.response.data.message);
-    // }
+    const { persianTitle, title, code, state } = values;
+    const countryData = {
+      persianTitle,
+      title,
+      code,
+    };
+    try {
+      const { data } = await AddNewCountries(countryData);
+      //console.log(data);
+      setError(null);
+    } catch (error) {
+      if (error.response && error.response.data.message) setError(error.response.data.message);
+    }
   };
 
   const formik = useFormik({
@@ -94,9 +101,12 @@ const AddNewCountry = () => {
           />
           {formik.errors.code && formik.touched.code && <div className="error">{formik.errors.code}</div>}
         </div>
-        <div className="formControl">
+
+        <div className="selectForm">
+          <label>state</label>
           <SelectForm formik={formik} name="state" label="وضعیت" options={stateOptions} />
         </div>
+
         <button type="submit">Add</button>
         {error && <p style={{ color: 'red', fontSize: '13px', padding: '10px' }}>{error}</p>}
       </form>
